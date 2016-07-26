@@ -6,13 +6,24 @@
 <br />
 <br />
 <form method="post" asp-action="PostImage" asp-controller="Impressionist" enctype="multipart/form-data">
-    <input type="file" name="files" multiple />
-    <input type="submit" value="Upload" />
+   <input type="file" name="files" onchange="this.form.submit()" />
 </form>
+<a href="/Impressionist/FromSample?sampleName=Castle.jpg">
+    <img style="width:100%; max-width:200px;" src="/images/Castle.jpg" />
+</a>
+
+<a href="/Impressionist/FromSample?sampleName=BoraBora.jpg">
+    <img style="width:100%; max-width:200px;" src="/images/BoraBora.jpg" />
+</a>
+
+<a href="/Impressionist/FromSample?sampleName=Rainier.jpg">
+    <img style="width:100%; max-width:200px;" src="/images/Rainier.jpg" />
+</a>
+
 <br />
 <br />
 @if (ViewData["ResultImage"] != null)
 {
-    <img style="width:100%; max-width:400px;" src="/@ViewData["OriginalImage"]" />
-    <img style="width:100%; max-width:400px;" src="/@ViewData["ResultImage"]" />
+    <img style="width:100%; max-width:400px;" src="/images/@ViewData["OriginalImage"]" />
+    <img style="width:100%; max-width:400px;" src="/images/@ViewData["ResultImage"]" />
 }

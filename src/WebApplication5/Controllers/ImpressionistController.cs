@@ -17,46 +17,58 @@ namespace WebApplication5.Controllers
 {
     public class ImpressionistController : Controller
     {
+        private IHostingEnvironment _environment;
+        public ImpressionistController(IHostingEnvironment environment)
+        {
+            _environment = environment;
+        }
+
         // GET: /<controller>/
         public IActionResult Index()
         {
             return View();
         }
 
-        private IHostingEnvironment _environment;
 
-        public ImpressionistController(IHostingEnvironment environment)
+        // GET: /<controller>/FromSample?sampleName=sample1.jpg
+        public async Task<IActionResult> FromSample(string sampleName)
         {
-            _environment = environment;
+            string sourceImage = Path.Combine(Directory.GetCurrentDirectory(), "images", sampleName);
+
+            await RunImpressionist(sourceImage);
+
+            return View("Index");
         }
 
         [HttpPost]
         public async Task<IActionResult> PostImage(ICollection<IFormFile> files)
         {
-            CleanupDir();
-
             var uploads = Path.Combine(_environment.WebRootPath, "uploads");
             var formFile = files.ElementAt(0);
 
             string fileName = "original.jpg";
-            formFile.SaveAs(fileName);
+            string sourceImage = Path.Combine(Directory.GetCurrentDirectory(), "images", fileName);
+            formFile.SaveAs(sourceImage);
 
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
-            var result = UploadImage(filePath);
+            await RunImpressionist(sourceImage);
 
-            string resultFile = Path.Combine(Directory.GetCurrentDirectory(), "masterpiece.jpg");
+            return View("Index");
+        }
+
+        private async Task RunImpressionist(string sourceImage)
+        {
+            var result = UploadImage(sourceImage);
+
+            string resultFile = Path.Combine(Directory.GetCurrentDirectory(), "images", "masterpiece.jpg");
             using (FileStream fs = new FileStream(resultFile, FileMode.Create))
             {
                 await (result.Content as StreamContent).CopyToAsync(fs);
             }
-
             
             this.ViewData["ResultImage"] = "masterpiece.jpg";
-            this.ViewData["OriginalImage"] = "original.jpg";
-
-
-            return View("Index");
+            this.ViewData["OriginalImage"] = Path.GetFileName(sourceImage);
         }
+
 
         private static void CleanupDir()
         {
