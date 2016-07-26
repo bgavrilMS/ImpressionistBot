@@ -9,3 +9,10 @@
     <input type="file" name="files" multiple />
     <input type="submit" value="Upload" />
 </form>
+<br />
+<br />
+@if (ViewData["ResultImage"] != null)
+{
+    <img style="width:100%; max-width:400px;" src="/@ViewData["OriginalImage"]" />
+    <img style="width:100%; max-width:400px;" src="/@ViewData["ResultImage"]" />
+}
